@@ -6,8 +6,14 @@ import (
 	"net/http"
 )
 
-type CloudClubClient struct {
+type GithubClient struct {
 	HttpClient *http.Client
+}
+
+func NewGithubClientClient() *GithubClient {
+	return &GithubClient{
+		HttpClient: &http.Client{},
+	}
 }
 
 type HttpInterface interface {
@@ -18,33 +24,28 @@ type HttpInterface interface {
 	Delete(url string) (resp *http.Response, err error)
 }
 
-func NewCloudClubClient() HttpInterface {
-	c := &CloudClubClient{}
-	return c
-}
-
-func (c *CloudClubClient) Get(url string) (resp *http.Response, err error) {
+func (c *GithubClient) Get(url string) (resp *http.Response, err error) {
 	return c.do(http.MethodGet, url, nil)
 }
 
-func (c *CloudClubClient) Post(url string, payload interface{}) (resp *http.Response, err error) {
+func (c *GithubClient) Post(url string, payload interface{}) (resp *http.Response, err error) {
 	return c.do(http.MethodPost, url, payload)
 }
 
-func (c *CloudClubClient) Patch(url string, payload interface{}) (resp *http.Response, err error) {
+func (c *GithubClient) Patch(url string, payload interface{}) (resp *http.Response, err error) {
 	return c.do(http.MethodPatch, url, payload)
 }
 
-func (c *CloudClubClient) Delete(url string) (resp *http.Response, err error) {
+func (c *GithubClient) Delete(url string) (resp *http.Response, err error) {
 	return c.do(http.MethodDelete, url, nil)
 }
 
-func (c *CloudClubClient) Put(url string, payload interface{}) (resp *http.Response, err error) {
-	return c.do(http.MethodPut, url, nil)
+func (c *GithubClient) Put(url string, payload interface{}) (resp *http.Response, err error) {
+	return c.do(http.MethodPut, url, payload)
 }
 
-func (c *CloudClubClient) do(method string, url string, payload interface{}) (resp *http.Response, err error) {
-	var request *http.Request
+func (c *GithubClient) do(method string, url string, payload interface{}) (resp *http.Response, err error) {
+	request := &http.Request{}
 	if method == http.MethodGet || method == http.MethodDelete {
 		request, err = http.NewRequest(method, url, nil)
 	} else {
@@ -57,6 +58,6 @@ func (c *CloudClubClient) do(method string, url string, payload interface{}) (re
 			return nil, err
 		}
 	}
-
+	GetCommonHeader(request)
 	return c.HttpClient.Do(request)
 }

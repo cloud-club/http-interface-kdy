@@ -1,5 +1,7 @@
 package main
 
-func main() {
+import "github.com/cloud-club/http-interface-kdy/internal"
 
+func main() {
+	internal.Run()
 }
